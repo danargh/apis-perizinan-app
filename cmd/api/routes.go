@@ -12,13 +12,14 @@ func (app *application) routes() http.Handler {
 	mux.NotFound(app.notFound)
 	mux.MethodNotAllowed(app.methodNotAllowed)
 
+	// middleware
 	mux.Use(app.logAccess)
 	mux.Use(app.recoverPanic)
 	mux.Use(app.authenticate)
 
 	mux.Get("/status", app.status)
-	mux.Post("/users", app.createUser)
-	mux.Post("/authentication-tokens", app.createAuthenticationToken)
+	mux.Post("/register", app.createUser)
+	mux.Post("/login", app.createAuthenticationToken)
 
 	mux.Group(func(mux chi.Router) {
 		mux.Use(app.requireAuthenticatedUser)

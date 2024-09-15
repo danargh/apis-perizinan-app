@@ -15,7 +15,7 @@ import (
 
 func (app *application) status(w http.ResponseWriter, r *http.Request) {
 	data := map[string]string{
-		"Status": "OK",
+		"Status": "HELLO WORLD! I LOVE GOLANG",
 	}
 
 	err := response.JSON(w, http.StatusOK, data)
@@ -69,7 +69,19 @@ func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	res := map[string]interface{}{
+		"Status":  "Success",
+		"Message": "User created successfully",
+		"Data": map[string]interface{}{
+			"email": input.Email,
+		},
+	}
+
+	// w.WriteHeader(http.StatusNoContent)
+	err = response.JSON(w, http.StatusOK, res)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http.Request) {
@@ -110,14 +122,13 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 		return
 	}
 
+	// create jwt token
 	var claims jwt.Claims
 	claims.Subject = strconv.Itoa(user.ID)
-
-	expiry := time.Now().Add(24 * time.Hour)
-	claims.Issued = jwt.NewNumericTime(time.Now())
-	claims.NotBefore = jwt.NewNumericTime(time.Now())
+	claims.Issued = jwt.NewNumericTime(time.Now())    // waktu token diterbitkan
+	claims.NotBefore = jwt.NewNumericTime(time.Now()) // token ini tidak valid sebelum waktu tertentu
+	expiry := time.Now().Add(24 * time.Hour)          // waktu expired 1 hari
 	claims.Expires = jwt.NewNumericTime(expiry)
-
 	claims.Issuer = app.config.baseURL
 	claims.Audiences = []string{app.config.baseURL}
 

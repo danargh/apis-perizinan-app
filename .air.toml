@@ -1,0 +1,53 @@
+# Config file for Air in TOML format
+
+root = "."  # Path ke root direktori proyek
+tmp_dir = "tmp"
+
+[build]
+pre_cmd = ["echo 'Building...'"]
+cmd = "go build -o tmp\\main.exe ./cmd/api"
+post_cmd = ["echo 'Build complete!'"]
+
+bin = "tmp\\main.exe"
+full_bin = "tmp\\main.exe"
+args_bin = []
+
+include_ext = ["go", "tpl", "tmpl", "html"]
+exclude_dir = ["assets", "tmp", "vendor", "frontend\\node_modules"]
+include_dir = []
+include_file = []
+exclude_file = []
+exclude_regex = ["_test\\.go"]
+exclude_unchanged = true
+follow_symlink = true
+log = "air.log"
+poll = false
+poll_interval = 500 # ms
+delay = 0 # ms
+stop_on_error = true
+send_interrupt = false
+kill_delay = 500 # nanosecond
+rerun = false
+rerun_delay = 500
+
+[log]
+time = false
+main_only = false
+
+[color]
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+clean_on_exit = true
+
+[screen]
+clear_on_rebuild = true
+keep_scroll = true
+
+[proxy]
+enabled = true
+proxy_port = 8090
+app_port = 4444
