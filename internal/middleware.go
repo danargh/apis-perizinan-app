@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"errors"
@@ -9,14 +9,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/danargh/apis-perizinan-app/internal/response"
+	"github.com/danargh/apis-perizinan-app/pkg/response"
 
 	"github.com/pascaldekloe/jwt"
 	"github.com/tomasen/realip"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (app *application) recoverPanic(next http.Handler) http.Handler {
+func (app *Application) recoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			// mengangkap panic
@@ -31,7 +31,7 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 }
 
 // log middleware untuk menampilkan log di terminal
-func (app *application) logAccess(next http.Handler) http.Handler {
+func (app *Application) logAccess(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mw := response.NewMetricsResponseWriter(w)
 		next.ServeHTTP(mw, r)
@@ -51,7 +51,7 @@ func (app *application) logAccess(next http.Handler) http.Handler {
 	})
 }
 
-func (app *application) authenticate(next http.Handler) http.Handler {
+func (app *Application) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// membuat header authorization supaya pengguna yang akan akses public route tetap bisa next
 		w.Header().Add("Vary", "Authorization")
@@ -114,7 +114,7 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 	})
 }
 
-func (app *application) requireAuthenticatedUser(next http.Handler) http.Handler {
+func (app *Application) requireAuthenticatedUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authenticatedUser := contextGetAuthenticatedUser(r)
 
@@ -127,7 +127,7 @@ func (app *application) requireAuthenticatedUser(next http.Handler) http.Handler
 	})
 }
 
-func (app *application) requireBasicAuthentication(next http.Handler) http.Handler {
+func (app *Application) requireBasicAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		username, plaintextPassword, ok := r.BasicAuth()
 		if !ok {

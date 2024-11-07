@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (app *application) routes() http.Handler {
+func (app *Application) routes() http.Handler {
 	mux := chi.NewRouter()
 
 	mux.NotFound(app.notFound)
@@ -30,6 +30,7 @@ func (app *application) routes() http.Handler {
 	mux.Group(func(mux chi.Router) {
 		mux.Use(app.requireBasicAuthentication)
 
+		// not recomended better using bearer
 		mux.Get("/basic-auth-protected", app.protected)
 	})
 

@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"context"
@@ -8,9 +8,38 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
+
+	"github.com/danargh/apis-perizinan-app/pkg/database"
 )
+
+type config struct {
+	baseURL   string
+	httpPort  int
+	basicAuth struct {
+		username       string
+		hashedPassword string
+	}
+	cookie struct {
+		secretKey string
+	}
+	db struct {
+		dsn         string
+		automigrate bool
+	}
+	jwt struct {
+		secretKey string
+	}
+}
+
+type Application struct {
+	config config
+	db     *database.DB
+	logger *slog.Logger
+	wg     sync.WaitGroup
+}
 
 const (
 	defaultIdleTimeout    = time.Minute      // batas waktu server tetapi aktif tanpa koneksi 1 menit
@@ -19,7 +48,7 @@ const (
 	defaultShutdownPeriod = 30 * time.Second // waktu maksimum server untuk shutdown adalah 30 detik apabila lebih maka force!
 )
 
-func (app *application) serveHTTP() error {
+func (app *Application) serveHTTP() error {
 	// membuat instance dari sruct menggunakan pointer
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", app.config.httpPort),
@@ -67,7 +96,8 @@ func (app *application) serveHTTP() error {
 
 	app.logger.Info("stopped server", slog.Group("server", "addr", srv.Addr))
 
-	// menunggu seluruh goroutine selesai
+	// menunggu seluruh goroutine/backgroundTask di helpers selesai
 	app.wg.Wait()
+
 	return nil
 }

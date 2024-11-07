@@ -52,12 +52,12 @@ tidy:
 	go mod tidy -v
 	go fmt ./...
 
-## build: build the cmd/api application
+## build: build the cmd application
 .PHONY: build
 build:
-	go build -o=/tmp/bin/api ./cmd/api
+	go build -o=/tmp/bin/api ./cmd
 	
-## run: run the cmd/api application
+## run: run the cmd application
 .PHONY: run
 run: build
 	/tmp/bin/api

@@ -5,7 +5,7 @@ tmp_dir = "tmp"
 
 [build]
 pre_cmd = ["echo 'Building...'"]
-cmd = "go build -o tmp\\main.exe ./cmd/api"
+cmd = "go build -o tmp\\main.exe ./cmd"
 post_cmd = ["echo 'Build complete!'"]
 
 bin = "tmp\\main.exe"
@@ -50,4 +50,4 @@ keep_scroll = true
 [proxy]
 enabled = true
 proxy_port = 8090
-app_port = 4444
+app_port = 8000

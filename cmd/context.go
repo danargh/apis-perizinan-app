@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/danargh/apis-perizinan-app/internal/database"
+	"github.com/danargh/apis-perizinan-app/pkg/database"
 )
 
 type contextKey string
